@@ -1,0 +1,29 @@
+.popup__container {
+  background-color: #ffffff;
+  position: relative;
+  max-width: 430px;
+  min-height: 330px;
+  border-radius: 13px;
+}
+
+.popup_image .popup__container {
+  background-color: #0000;
+  max-width: none;
+  min-height: none;
+  border-radius: none;
+}
+
+.popup_avatar .popup__container {
+  min-height: 255px;
+}
+
+.popup_question .popup__container {
+  min-height: 185px;
+}
+
+@media screen and (max-width: 700px) {
+  .popup__container {
+    max-width: 282px;
+    min-height: 322px;
+  }
+}

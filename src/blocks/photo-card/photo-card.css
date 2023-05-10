@@ -1,0 +1,6 @@
+.photo-card {
+  position: relative;
+  width: 100%;
+  min-height: 361px;
+  border-radius: 4%;
+}

@@ -1,0 +1,12 @@
+.popup__span {
+  font-size: 14px;
+  line-height: 16.94px;
+  min-height: 40px;
+  color: #ff0000;
+}
+
+@media screen and (max-width: 700px) {
+  .popup__span {
+    min-height: 56px;
+  }
+}

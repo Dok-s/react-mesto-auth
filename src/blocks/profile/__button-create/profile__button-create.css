@@ -1,0 +1,26 @@
+.profile__button-create {
+  grid-area: button;
+  background-image: url("../../../images/Edit-Button.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  border: none;
+  width: 24px;
+  height: 24px;
+  background-color: #000000;
+  margin: 0;
+  padding: 0;
+  margin-top: 35px;
+  cursor: pointer;
+}
+
+.profile__button-create:hover {
+  opacity: 0.6;
+}
+
+@media screen and (max-width: 700px) {
+  .profile__button-create {
+    width: 18px;
+    height: 18px;
+    margin-top: 30px;
+  }
+}

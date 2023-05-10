@@ -1,0 +1,17 @@
+.photo-card__title-like {
+  display: flex;
+  background-color: #ffffff;
+  justify-content: space-between;
+  padding-left: 21px;
+  padding-right: 30px;
+  border-radius: 0 0 10px 10px;
+}
+
+@media screen and (max-width: 700px) {
+  .photo-card__title-like {
+    padding-top: 7px;
+    padding-bottom: 4px;
+    width: 241px;
+    padding-right: 20px;
+  }
+}

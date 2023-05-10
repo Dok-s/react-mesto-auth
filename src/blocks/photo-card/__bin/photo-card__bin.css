@@ -1,0 +1,16 @@
+.photo-card__bin {
+  width: 18px;
+  height: 19px;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  background-image: url('../../../images/bin.svg');
+  background-repeat: no-repeat;
+  border: none;
+  background-color: #0000;
+  cursor: pointer;
+}
+
+.photo-card__bin:hover {
+  opacity: 0.6;
+}
