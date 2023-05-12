@@ -246,6 +246,16 @@ function App() {
                 />
               }
             />
+            <Route
+              path="/*"
+              element={
+                loggedIn ? (
+                  <Navigate to="/" replace />
+                ) : (
+                  <Navigate to="/sign-in" replace />
+                )
+              }
+            />
           </Routes>
           <Footer loggedIn={loggedIn} />
           <EditProfilePopup
