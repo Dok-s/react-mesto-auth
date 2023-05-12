@@ -4,12 +4,21 @@ import Main from "./Main";
 import Footer from "./Footer";
 import ImagePopup from "./ImagePopup";
 import React from "react";
-import CurrentUserContext from "../contexts/CurrentUserContext";
+import {
+  CurrentUserContext,
+  defaultCurrentUser,
+} from "../contexts/CurrentUserContext";
 import api from "../utils/Api";
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
 import QuestionPopup from "./QuestionPopup";
+import { Route, Routes, useNavigate } from "react-router-dom";
+import ProtectedRoute from "./ProtectedRoute";
+import Login from "./Login";
+import Register from "./Register";
+import InfoTooltip from "./InfoTooltip";
+import * as apiAuth from "../utils/apiAuth";
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] =
@@ -20,30 +29,26 @@ function App() {
   const [isQuestionPopupOpen, setIsQuestionPopupOpen] = React.useState(false);
   const [cardDelete, setCardDelete] = React.useState({});
   const [selectedCard, setSelectedCard] = React.useState(null);
-  const [currentUser, setCurrentUser] = React.useState({});
+  const [currentUser, setCurrentUser] = React.useState(defaultCurrentUser);
   const [cards, setCards] = React.useState([]);
+  const [loggedIn, setLoggedIn] = React.useState(false);
+  const [isSignIn, setIsSignIn] = React.useState(true);
+  const [isInfoTooltipPopup, setIsInfoTooltipPopup] = React.useState(false);
+  const navigate = useNavigate();
 
   React.useEffect(() => {
-    api
-      .getUserInfo()
-      .then((data) => {
-        setCurrentUser(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
-
-  React.useEffect(() => {
-    api
-      .getInitialCards()
-      .then((items) => {
-        setCards(items);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+    if (loggedIn) {
+      Promise.all([api.getUserInfo(), api.getInitialCards()])
+        .then(([data, cards]) => {
+          setCurrentUser({ ...currentUser, ...data });
+          setCards(cards);
+        })
+        .catch((err) => {
+          console.log(err);
+          openInfoTooltipPopup(false);
+        });
+    }
+  }, [loggedIn]);
 
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
@@ -68,6 +73,12 @@ function App() {
     setIsAddPlacePopupOpen(false);
     setIsQuestionPopupOpen(false);
     setSelectedCard(null);
+    setIsInfoTooltipPopup(false);
+  }
+
+  function openInfoTooltipPopup(isSignIn) {
+    setIsInfoTooltipPopup(true);
+    setIsSignIn(isSignIn);
   }
 
   function handleDeleteClick() {
@@ -143,22 +154,100 @@ function App() {
       });
   }
 
+  function handleRegister(regData) {
+    apiAuth
+      .register(regData)
+      .then((res) => {
+        if (res && res.data) {
+          openInfoTooltipPopup(true);
+          navigate("/sign-in");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        openInfoTooltipPopup(false);
+      });
+  }
+
+  function handleLogin(loginData) {
+    apiAuth
+      .login(loginData)
+      .then((res) => {
+        if (res && res.token) {
+          setCurrentUser({ ...currentUser, email: loginData.email });
+          localStorage.setItem("jwt", res.token);
+          checkToken();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        openInfoTooltipPopup(false);
+      });
+  }
+
+  function checkToken() {
+    const token = localStorage.getItem("jwt");
+    if (token) {
+      apiAuth
+        .checkToken(token)
+        .then((res) => {
+          if (res && res.data) {
+            setLoggedIn(true);
+            setCurrentUser({ ...currentUser, email: res.data.email });
+            navigate("/");
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          openInfoTooltipPopup(false);
+        });
+    }
+  }
+
+  React.useEffect(() => {
+    checkToken();
+  }, []);
+
+  function logOut() {
+    setLoggedIn(false);
+    setCurrentUser(defaultCurrentUser);
+    localStorage.removeItem("jwt");
+  }
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="App">
-        <Header src={logo} />
+        <Header
+          src={logo}
+          loggedIn={loggedIn}
+          email={currentUser.email}
+          logOut={logOut}
+        />
         <div className="page">
-          <Main
-            onEditAvatar={handleEditAvatarClick}
-            onEditProfile={handleEditProfileClick}
-            onAddPlace={handleAddPlaceClick}
-            onCardClick={handleCardClick}
-            onQuestionClick={handleQuestionClick}
-            onCardDelete={handleDeleteClick}
-            cards={cards}
-            onCardLike={handleCardLike}
-          />
-          <Footer />
+          <Routes>
+            <Route
+              path="/sign-up"
+              element={<Register onRegister={handleRegister} />}
+            />
+            <Route path="/sign-in" element={<Login onLogin={handleLogin} />} />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute
+                  loggedIn={loggedIn}
+                  element={Main}
+                  onEditAvatar={handleEditAvatarClick}
+                  onEditProfile={handleEditProfileClick}
+                  onAddPlace={handleAddPlaceClick}
+                  onCardClick={handleCardClick}
+                  onQuestionClick={handleQuestionClick}
+                  onCardLike={handleCardLike}
+                  cards={cards}
+                />
+              }
+            />
+          </Routes>
+          <Footer loggedIn={loggedIn} />
           <EditProfilePopup
             isOpen={isEditProfilePopupOpen}
             onClose={closeAllPopups}
@@ -179,6 +268,12 @@ function App() {
             isOpen={isQuestionPopupOpen}
             onClose={closeAllPopups}
             onCardDelete={handleDeleteClick}
+          />
+          <InfoTooltip
+            name="tooltip"
+            isOpen={isInfoTooltipPopup}
+            onClose={closeAllPopups}
+            isSignIn={isSignIn}
           />
         </div>
       </div>

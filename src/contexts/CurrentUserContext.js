@@ -1,5 +1,10 @@
 import React from "react";
+import avatar from "../images/Kusto.jpg";
 
-const CurrentUserContext = React.createContext({});
+export const CurrentUserContext = React.createContext({});
 
-export default CurrentUserContext;
+export const defaultCurrentUser = {
+  name: "Иван Иванов",
+  about: "водитель",
+  avatar: avatar,
+};

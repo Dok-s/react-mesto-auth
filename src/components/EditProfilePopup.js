@@ -1,5 +1,5 @@
 import React from "react";
-import CurrentUserContext from "../contexts/CurrentUserContext";
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import PopupWithForm from "./PopupWithForm";
 
 function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
@@ -9,9 +9,9 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
   const currentUser = React.useContext(CurrentUserContext);
 
   React.useEffect(() => {
-    setName(currentUser.name); // Сергей , Поле формы редактирования профиля
-    setDescription(currentUser.about); // заполняется актуальными данными при каждом открытии попапа.
-  }, [currentUser, isOpen]); // Этот код нам дали в проектной
+    setName(currentUser.name);
+    setDescription(currentUser.about);
+  }, [currentUser, isOpen]);
 
   function handleChange(e) {
     if (e.target.name === "name") {

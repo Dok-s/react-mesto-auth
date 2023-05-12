@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import Card from "./Card.js";
-import CurrentUserContext from "../contexts/CurrentUserContext.js";
+import { CurrentUserContext } from "../contexts/CurrentUserContext.js";
 
 function Main({
   onEditAvatar,
@@ -8,7 +8,6 @@ function Main({
   onAddPlace,
   onCardClick,
   onQuestionClick,
-  onCardDelete,
   cards,
   onCardLike,
 }) {
@@ -46,7 +45,6 @@ function Main({
             key={card._id}
             card={card}
             onCardClick={onCardClick}
-            onCardDelete={onCardDelete}
             onCardLike={onCardLike}
             onQuestionClick={onQuestionClick}
           />

@@ -1,10 +1,8 @@
 import React from "react";
 
-function Footer() {
+function Footer({ loggedIn }) {
   return (
-    // так мне рекоммендовал сделать предыдущий ревьюер на 10пр
-    // чтобы дата менялась
-    <footer className="footer">
+    <footer className={loggedIn ? "footer" : "footer_invisible"}>
       <p className="footer__copyright">
         &#169; {new Date().getFullYear()} Mesto Russia
       </p>
